@@ -1,0 +1,19 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Ürün fotoğrafları
+    match /urunler/{firmaId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.resource.size < 2 * 1024 * 1024  // Max 2MB
+                   && request.resource.contentType.matches('image/.*');
+    }
+
+    // Logo
+    match /logolar/{firmaId}/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.resource.size < 2 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+  }
+}

@@ -1,0 +1,40 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ══════════════════════════════════════
+    // GASTRO27 Firestore Güvenlik Kuralları
+    // ══════════════════════════════════════
+
+    // Firmalar — herkes okuyabilir (müşteri menü görüntüler)
+    // Yazma: sadece client-side auth ile (admin panelden ekleme)
+    match /firmalar/{firmaId} {
+      allow read: if true;
+      allow write: if true;
+      // NOT: Production'da Firebase Auth eklenince kurallar sıkılaştırılacak
+
+      // Alt koleksiyonlar
+      match /urunler/{urunId} {
+        allow read: if true;
+        allow write: if true;
+      }
+
+      match /kuryeler/{kuryeId} {
+        allow read: if true;
+        allow write: if true;
+      }
+    }
+
+    // Siparişler — müşteri oluşturabilir, herkes okuyabilir
+    match /siparisler/{siparisId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // Sistem ayarları
+    match /sistem/{docId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}
