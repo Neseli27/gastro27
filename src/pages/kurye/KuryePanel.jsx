@@ -190,6 +190,46 @@ export default function KuryePanel({ toastGoster }) {
                     </span>
                   </div>
 
+                  {/* İlçe / Mahalle — kurye için en önemli bilgi */}
+                  {(s.ilce || s.mahalle) && (
+                    <div
+                      style={{
+                        background: "#e0f2fe",
+                        borderRadius: "var(--radius-sm)",
+                        padding: "10px 12px",
+                        marginBottom: 10,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                      }}
+                    >
+                      <span style={{ fontSize: "1.25rem" }}>📍</span>
+                      <div>
+                        <div style={{ fontWeight: 800, fontSize: "1rem", color: "#0c4a6e" }}>
+                          {s.ilce}{s.mahalle ? ` — ${s.mahalle}` : ""}
+                        </div>
+                        {s.adresNot && (
+                          <div className="text-xs" style={{ color: "#64748b", marginTop: 2 }}>
+                            {s.adresNot}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Müşteri bilgisi */}
+                  <div className="flex justify-between items-center mb-8">
+                    <div>
+                      <div className="font-bold text-sm">{s.musteriAd}</div>
+                      <a href={`tel:${s.musteriTel}`} className="text-xs" style={{ color: "var(--renk-bilgi)" }}>
+                        📞 {s.musteriTel}
+                      </a>
+                    </div>
+                    <span className="font-bold" style={{ color: "var(--renk-birincil)" }}>
+                      💵 {formatPara(s.toplam)}
+                    </span>
+                  </div>
+
                   {/* Ürünler */}
                   <div
                     style={{
@@ -206,13 +246,23 @@ export default function KuryePanel({ toastGoster }) {
                     ))}
                   </div>
 
-                  <div className="flex justify-between items-center mb-8">
-                    <span className="text-sm text-muted">
-                      💵 Tahsil: <strong>{formatPara(s.toplam)}</strong>
-                    </span>
-                  </div>
+                  {/* Sipariş notu */}
+                  {s.not && (
+                    <div
+                      className="text-xs"
+                      style={{
+                        background: "var(--renk-uyari-acik)",
+                        padding: "6px 10px",
+                        borderRadius: "var(--radius-xs)",
+                        marginBottom: 8,
+                      }}
+                    >
+                      📝 {s.not}
+                    </div>
+                  )}
 
-                  {s.adresNot && (
+                  {/* Eski format adres (ilçe/mahalle yoksa) */}
+                  {!s.ilce && s.adresNot && (
                     <div className="text-xs text-muted mb-8">
                       🏠 {s.adresNot}
                     </div>
@@ -263,6 +313,33 @@ export default function KuryePanel({ toastGoster }) {
                       {SIPARIS_DURUMLARI[s.durum]?.etiket}
                     </span>
                   </div>
+
+                  {/* İlçe / Mahalle */}
+                  {(s.ilce || s.mahalle) && (
+                    <div
+                      style={{
+                        background: "#e0f2fe",
+                        borderRadius: "var(--radius-sm)",
+                        padding: "8px 12px",
+                        marginBottom: 8,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 8,
+                      }}
+                    >
+                      <span style={{ fontSize: "1rem" }}>📍</span>
+                      <div>
+                        <div style={{ fontWeight: 700, color: "#0c4a6e" }}>
+                          {s.ilce}{s.mahalle ? ` — ${s.mahalle}` : ""}
+                        </div>
+                        {s.adresNot && (
+                          <div className="text-xs" style={{ color: "#64748b" }}>
+                            {s.adresNot}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Telefon */}
                   <a

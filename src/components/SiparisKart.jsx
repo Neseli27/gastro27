@@ -28,6 +28,33 @@ export default function SiparisKart({ siparis, butonlar, gosterKurye }) {
         <div className="text-sm text-muted">{siparis.musteriTel}</div>
       </div>
 
+      {/* İlçe / Mahalle — belirgin gösterim */}
+      {(siparis.ilce || siparis.mahalle) && (
+        <div
+          style={{
+            background: "var(--renk-bilgi-acik)",
+            borderRadius: "var(--radius-sm)",
+            padding: "8px 12px",
+            marginBottom: 8,
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+          }}
+        >
+          <span style={{ fontSize: "1.125rem" }}>📍</span>
+          <div>
+            <div style={{ fontWeight: 700, fontSize: "0.9375rem", color: "var(--renk-gri-900)" }}>
+              {siparis.ilce}{siparis.mahalle ? ` — ${siparis.mahalle}` : ""}
+            </div>
+            {siparis.adresNot && (
+              <div className="text-xs text-muted" style={{ marginTop: 2 }}>
+                {siparis.adresNot}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Ürünler */}
       <div
         style={{
@@ -94,8 +121,8 @@ export default function SiparisKart({ siparis, butonlar, gosterKurye }) {
         </a>
       )}
 
-      {/* Adres notu */}
-      {siparis.adresNot && (
+      {/* Adres notu (ilçe/mahalle yoksa eski format) */}
+      {!siparis.ilce && siparis.adresNot && (
         <div className="text-sm text-muted mb-8">🏠 {siparis.adresNot}</div>
       )}
 

@@ -19,6 +19,8 @@ export default function Sepet({
   const navigate = useNavigate();
   const [musteriAd, setMusteriAd] = useState("");
   const [musteriTel, setMusteriTel] = useState("");
+  const [ilce, setIlce] = useState("");
+  const [mahalle, setMahalle] = useState("");
   const [konum, setKonum] = useState(null);
   const [adresText, setAdresText] = useState("");
   const [adresNot, setAdresNot] = useState("");
@@ -35,8 +37,12 @@ export default function Sepet({
       toastGoster("Lütfen geçerli bir telefon girin", "hata");
       return;
     }
-    if (!konum && !adresText.trim()) {
-      toastGoster("Lütfen konumunuzu gönderin veya adresinizi yazın", "hata");
+    if (!ilce) {
+      toastGoster("Lütfen ilçe seçin", "hata");
+      return;
+    }
+    if (!mahalle.trim()) {
+      toastGoster("Lütfen mahalle/semt girin", "hata");
       return;
     }
     if (sepet.length === 0) {
@@ -52,6 +58,8 @@ export default function Sepet({
         firmaAdi: sepetFirmaAdi,
         musteriAd: musteriAd.trim(),
         musteriTel: musteriTel.trim(),
+        ilce: ilce,
+        mahalle: mahalle.trim(),
         konum: konum || null,
         adresText: adresText.trim() || null,
         adresNot: adresNot.trim() || null,
@@ -287,9 +295,41 @@ export default function Sepet({
           />
         </div>
 
+        {/* İlçe */}
+        <div className="form-grup">
+          <label className="form-etiket">İlçe *</label>
+          <select
+            className="form-input"
+            value={ilce}
+            onChange={(e) => setIlce(e.target.value)}
+          >
+            <option value="">İlçe seçin</option>
+            <option value="Şahinbey">Şahinbey</option>
+            <option value="Şehitkamil">Şehitkamil</option>
+            <option value="Oğuzeli">Oğuzeli</option>
+            <option value="Nizip">Nizip</option>
+            <option value="Araban">Araban</option>
+            <option value="İslahiye">İslahiye</option>
+            <option value="Nurdağı">Nurdağı</option>
+            <option value="Karkamış">Karkamış</option>
+            <option value="Yavuzeli">Yavuzeli</option>
+          </select>
+        </div>
+
+        {/* Mahalle / Semt */}
+        <div className="form-grup">
+          <label className="form-etiket">Mahalle / Semt *</label>
+          <input
+            className="form-input"
+            placeholder="Örn: Karataş Mah., Güneykent, Binevler..."
+            value={mahalle}
+            onChange={(e) => setMahalle(e.target.value)}
+          />
+        </div>
+
         {/* Konum */}
         <div className="form-grup">
-          <label className="form-etiket">Konum *</label>
+          <label className="form-etiket">Konum (opsiyonel ama önerilir)</label>
           <KonumButon
             konum={konum}
             setKonum={setKonum}
@@ -298,7 +338,7 @@ export default function Sepet({
           {!konum && (
             <textarea
               className="form-input"
-              placeholder="Konum izni veremediyseniz adresinizi yazın..."
+              placeholder="Konum izni veremediyseniz açık adresinizi yazın..."
               value={adresText}
               onChange={(e) => setAdresText(e.target.value)}
               rows={2}
