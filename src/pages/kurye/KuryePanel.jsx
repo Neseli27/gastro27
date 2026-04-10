@@ -16,7 +16,7 @@ export default function KuryePanel({ toastGoster }) {
   const [sekme, setSekme] = useState("havuz");
   const [havuz, setHavuz] = useState([]);
   const [teslimatlar, setTeslimatlar] = useState([]);
-  const [islemde, setIslemde] = useState(false);
+  const [islemdeId, setIslemdeId] = useState(null);
 
   useEffect(() => {
     const o = oturumKontrol("kurye");
@@ -61,8 +61,8 @@ export default function KuryePanel({ toastGoster }) {
 
   // Siparişi al — Firestore transaction ile çift atama önlenir
   const siparisiAl = async (siparisId) => {
-    if (islemde) return;
-    setIslemde(true);
+    if (islemdeId) return;
+    setIslemdeId(siparisId);
 
     try {
       const siparisRef = doc(db, "siparisler", siparisId);
@@ -95,7 +95,7 @@ export default function KuryePanel({ toastGoster }) {
         "hata"
       );
     } finally {
-      setIslemde(false);
+      setIslemdeId(null);
     }
   };
 
@@ -220,14 +220,14 @@ export default function KuryePanel({ toastGoster }) {
 
                   <button
                     onClick={() => siparisiAl(s.id)}
-                    disabled={islemde}
+                    disabled={islemdeId === s.id}
                     className="btn btn-tam btn-buyuk"
                     style={{
                       background: "#06b6d4",
                       color: "#fff",
                     }}
                   >
-                    {islemde ? "İşleniyor..." : "🛵 Bu Siparişi Al"}
+                    {islemdeId === s.id ? "İşleniyor..." : "🛵 Bu Siparişi Al"}
                   </button>
                 </div>
               ))
