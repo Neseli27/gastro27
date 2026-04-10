@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 
 // Müşteri
 import AnaSayfa from "./pages/musteri/AnaSayfa";
@@ -37,6 +37,29 @@ export default function App() {
 
   // Toast state
   const [toast, setToast] = useState({ mesaj: "", tip: "bilgi" });
+
+  // PWA Install Prompt
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [installGoster, setInstallGoster] = useState(false);
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+      // 3 saniye sonra göster (hemen gösterme, kullanıcı sayfayı tanısın)
+      setTimeout(() => setInstallGoster(true), 3000);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const pwaKur = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    setInstallGoster(false);
+    setInstallPrompt(null);
+  };
 
   const toastGoster = useCallback((mesaj, tip = "bilgi") => {
     setToast({ mesaj, tip });
@@ -118,6 +141,51 @@ export default function App() {
         tip={toast.tip}
         onKapat={() => setToast({ mesaj: "", tip: "bilgi" })}
       />
+
+      {/* PWA Install Banner */}
+      {installGoster && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 70,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: "calc(100% - 32px)",
+            maxWidth: "var(--max-genislik)",
+            background: "var(--renk-beyaz)",
+            borderRadius: "var(--radius-lg)",
+            padding: "14px 16px",
+            boxShadow: "var(--golge-xl)",
+            zIndex: 95,
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            animation: "slideUp 0.3s ease",
+          }}
+        >
+          <div style={{ fontSize: "1.5rem" }}>📲</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 700, fontSize: "0.875rem" }}>
+              GASTRO27'yi Yükle
+            </div>
+            <div className="text-xs text-muted">
+              Ana ekrana ekle, hızlı eriş
+            </div>
+          </div>
+          <button
+            onClick={pwaKur}
+            className="btn btn-birincil btn-kucuk"
+          >
+            Yükle
+          </button>
+          <button
+            onClick={() => setInstallGoster(false)}
+            style={{ color: "var(--renk-gri-400)", fontSize: "1.25rem", padding: 4 }}
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       <Routes>
         {/* Müşteri */}

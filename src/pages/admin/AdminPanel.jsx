@@ -334,14 +334,27 @@ export default function AdminPanel({ toastGoster }) {
               </div>
             ) : (
               firmalar.map((f) => (
-                <div key={f.id} className="kart flex items-center justify-between">
-                  <div>
-                    <div className="font-bold">{f.ad}</div>
-                    <div className="text-xs text-muted">
-                      {f.telefon} · {f.durum}
+                <div key={f.id} className="kart">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-bold">{f.ad}</div>
+                      <div className="text-xs text-muted">
+                        {f.telefon || "Tel yok"} · {f.adres || "Adres yok"}
+                      </div>
+                      <div className="text-xs" style={{ marginTop: 2 }}>
+                        <span
+                          className="badge"
+                          style={{
+                            background: f.durum === "aktif" ? "var(--renk-basari-acik)" : "var(--renk-tehlike-acik)",
+                            color: f.durum === "aktif" ? "var(--renk-basari)" : "var(--renk-tehlike)",
+                          }}
+                        >
+                          {f.durum}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex gap-8">
+                  <div className="flex gap-8" style={{ marginTop: 10, flexWrap: "wrap" }}>
                     <button
                       onClick={() =>
                         firmaDurumGuncelle(
@@ -362,6 +375,26 @@ export default function AdminPanel({ toastGoster }) {
                       }}
                     >
                       {f.durum === "aktif" ? "Askıya Al" : "Aktif Et"}
+                    </button>
+                    <button
+                      onClick={async () => {
+                        const yeni = prompt("Yeni şifre girin:");
+                        if (!yeni || !yeni.trim()) return;
+                        try {
+                          const hash = await hashSifre(yeni.trim());
+                          await updateDoc(doc(db, "firmalar", f.id), { sifreHash: hash });
+                          toastGoster(`${f.ad} şifresi güncellendi`, "basari");
+                        } catch {
+                          toastGoster("Şifre güncellenemedi", "hata");
+                        }
+                      }}
+                      className="btn btn-kucuk"
+                      style={{
+                        background: "var(--renk-bilgi-acik)",
+                        color: "var(--renk-bilgi)",
+                      }}
+                    >
+                      🔑 Şifre
                     </button>
                     <button
                       onClick={() => firmaSil(f.id)}

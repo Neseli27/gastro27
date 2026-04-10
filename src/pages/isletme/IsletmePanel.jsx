@@ -216,33 +216,97 @@ export default function IsletmePanel({ toastGoster }) {
                         </>
                       )}
                       {s.durum === "onaylandi" && (
-                        <button
-                          className="btn btn-birincil btn-kucuk btn-tam"
-                          onClick={() => durumGuncelle(s.id, "hazirlaniyor")}
-                        >
-                          👨‍🍳 Hazırlanıyor
-                        </button>
+                        <div style={{ display: "flex", gap: 8, width: "100%", flexWrap: "wrap" }}>
+                          <button
+                            className="btn btn-birincil btn-kucuk"
+                            style={{ flex: 1 }}
+                            onClick={() => durumGuncelle(s.id, "hazirlaniyor")}
+                          >
+                            👨‍🍳 Hazırlanıyor
+                          </button>
+                          <button
+                            className="btn btn-tehlike btn-kucuk"
+                            onClick={() => {
+                              if (window.confirm("Siparişi iptal etmek istediğinize emin misiniz?"))
+                                durumGuncelle(s.id, "iptal_isletme");
+                            }}
+                          >
+                            İptal
+                          </button>
+                        </div>
                       )}
                       {s.durum === "hazirlaniyor" && (
-                        <button
-                          className="btn btn-uyari btn-kucuk btn-tam"
-                          onClick={() =>
-                            durumGuncelle(s.id, "kurye_bekliyor", {
-                              kuryeHavuzZaman: serverTimestamp(),
-                            })
-                          }
-                        >
-                          📦 Kuryeye Gönder
-                        </button>
+                        <div style={{ display: "flex", gap: 8, width: "100%", flexWrap: "wrap" }}>
+                          <button
+                            className="btn btn-uyari btn-kucuk"
+                            style={{ flex: 1 }}
+                            onClick={() =>
+                              durumGuncelle(s.id, "kurye_bekliyor", {
+                                kuryeHavuzZaman: serverTimestamp(),
+                              })
+                            }
+                          >
+                            📦 Kuryeye Gönder
+                          </button>
+                          <button
+                            className="btn btn-kucuk"
+                            style={{
+                              background: "#25D366",
+                              color: "#fff",
+                            }}
+                            onClick={() => {
+                              // İlk aktif kuryeyi bul ve WhatsApp gönder
+                              const kuryeRef = collection(db, "firmalar", oturum.id, "kuryeler");
+                              getDocs(kuryeRef).then((snap) => {
+                                const aktifKuryeler = snap.docs
+                                  .map((d) => d.data())
+                                  .filter((k) => k.aktif);
+                                if (aktifKuryeler.length === 0) {
+                                  toastGoster("Aktif kurye bulunamadı", "hata");
+                                  return;
+                                }
+                                if (aktifKuryeler.length === 1) {
+                                  whatsappGonder(s, aktifKuryeler[0].telefon);
+                                } else {
+                                  // Birden fazla kurye varsa ilkini seç (basit çözüm)
+                                  const secim = aktifKuryeler.map((k, i) => `${i + 1}. ${k.ad}`).join("\n");
+                                  const no = prompt(`Kurye seçin:\n${secim}\n\nNumara girin:`);
+                                  const idx = parseInt(no) - 1;
+                                  if (idx >= 0 && idx < aktifKuryeler.length) {
+                                    whatsappGonder(s, aktifKuryeler[idx].telefon);
+                                  }
+                                }
+                              });
+                            }}
+                          >
+                            📱 WhatsApp
+                          </button>
+                        </div>
                       )}
                       {s.durum === "kurye_bekliyor" && (
-                        <div className="text-sm text-muted" style={{ flex: 1 }}>
-                          ⏳ Kurye bekleniyor...
+                        <div className="flex items-center justify-between" style={{ width: "100%" }}>
+                          <div className="text-sm text-muted">
+                            ⏳ Kurye bekleniyor...
+                          </div>
+                          <button
+                            className="btn btn-tehlike btn-kucuk"
+                            onClick={() => {
+                              if (window.confirm("Siparişi iptal etmek istediğinize emin misiniz?"))
+                                durumGuncelle(s.id, "iptal_isletme");
+                            }}
+                          >
+                            İptal
+                          </button>
                         </div>
                       )}
                       {s.durum === "yolda" && (
                         <div className="text-sm" style={{ color: "var(--renk-bilgi)" }}>
-                          🛵 Kurye yolda
+                          🛵 Kurye: {s.kuryeAd || "Yolda"}
+                        </div>
+                      )}
+                      {s.durum === "teslim_edildi" && (
+                        <div className="text-sm" style={{ color: "var(--renk-basari)" }}>
+                          ✅ Teslim edildi, müşteri onayı bekleniyor
                         </div>
                       )}
                     </>

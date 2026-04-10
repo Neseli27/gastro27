@@ -66,6 +66,17 @@ export default function SiparisTakip() {
     }
   };
 
+  const siparisiIptalEt = async () => {
+    if (!window.confirm("Siparişi iptal etmek istediğinize emin misiniz?")) return;
+    try {
+      await updateDoc(doc(db, "siparisler", siparisId), {
+        durum: "iptal_musteri",
+      });
+    } catch (err) {
+      console.error("İptal hatası:", err);
+    }
+  };
+
   if (yukleniyor) {
     return (
       <div className="yukleniyor" style={{ minHeight: "100dvh" }}>
@@ -223,6 +234,17 @@ export default function SiparisTakip() {
                 className="btn btn-basari btn-tam btn-buyuk mb-16"
               >
                 ✅ Teslim Aldım
+              </button>
+            )}
+
+            {/* Müşteri iptal butonu (sadece beklemede veya onaylandı durumunda) */}
+            {(siparis.durum === "beklemede" || siparis.durum === "onaylandi") && (
+              <button
+                onClick={siparisiIptalEt}
+                className="btn btn-tehlike btn-tam mb-16"
+                style={{ opacity: 0.8 }}
+              >
+                Siparişi İptal Et
               </button>
             )}
 
