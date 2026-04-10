@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { VARSAYILAN_KATEGORILER, firmaAcikMi, formatPara } from "../../utils/helpers";
 import SepetBar from "../../components/SepetBar";
@@ -9,11 +9,13 @@ import BottomNav from "../../components/BottomNav";
 export default function AnaSayfa({ sepetAdet, sepetToplam, ...props }) {
   const navigate = useNavigate();
   const [firmalar, setFirmalar] = useState([]);
+  const [kategoriler, setKategoriler] = useState([]);
   const [yukleniyor, setYukleniyor] = useState(true);
   const [seciliKategori, setSeciliKategori] = useState(null);
 
   useEffect(() => {
     firmalariGetir();
+    kategorileriGetir();
   }, []);
 
   const firmalariGetir = async () => {
@@ -25,6 +27,19 @@ export default function AnaSayfa({ sepetAdet, sepetToplam, ...props }) {
       console.error("Firmalar yüklenemedi:", err);
     } finally {
       setYukleniyor(false);
+    }
+  };
+
+  const kategorileriGetir = async () => {
+    try {
+      const adminDoc = await getDoc(doc(db, "sistem", "admin"));
+      if (adminDoc.exists() && adminDoc.data().kategoriler?.length > 0) {
+        setKategoriler(adminDoc.data().kategoriler);
+      } else {
+        setKategoriler(VARSAYILAN_KATEGORILER);
+      }
+    } catch {
+      setKategoriler(VARSAYILAN_KATEGORILER);
     }
   };
 
@@ -43,33 +58,38 @@ export default function AnaSayfa({ sepetAdet, sepetToplam, ...props }) {
   return (
     <div>
       {/* Header */}
-      <header className="header">
-        <div className="header-logo">
-          <span>G</span>ASTRO27
-        </div>
-        <div style={{ fontSize: "0.625rem", color: "var(--renk-bakir)", fontWeight: 500 }}>
-          Gaziantep'in Lezzeti
-        </div>
-      </header>
+      <div style={{ display: "flex", justifyContent: "center", background: "var(--renk-beyaz)", borderBottom: "1.5px solid var(--renk-bal-acik)", position: "sticky", top: 0, zIndex: 100 }}>
+        <header style={{ width: "100%", maxWidth: "var(--max-genislik)", padding: "0 16px", height: "var(--nav-yukseklik)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div className="header-logo">
+            <span>G</span>ASTRO27
+          </div>
+          <div style={{ fontSize: "0.625rem", color: "var(--renk-bakir)", fontWeight: 500 }}>
+            Gaziantep'in Lezzeti
+          </div>
+        </header>
+      </div>
 
-      {/* Hero Chip Bar */}
-      <div className="hero-chip-bar">
-        <div className="chip-wrap" style={{ position: "relative", zIndex: 2 }}>
-          <button
-            className={`chip chip-hero ${!seciliKategori ? "aktif" : ""}`}
-            onClick={() => setSeciliKategori(null)}
-          >
-            Tümü
-          </button>
-          {VARSAYILAN_KATEGORILER.map((k) => (
+      {/* Hero Chip Bar — centered */}
+      <div style={{ display: "flex", justifyContent: "center", background: "linear-gradient(135deg, var(--renk-koyu-1), var(--renk-koyu-2), var(--renk-koyu-3))", borderTop: "2px solid var(--renk-bal)", borderBottom: "2px solid var(--renk-bal)", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", right: -10, top: -10, width: 120, height: 120, background: "radial-gradient(circle, rgba(253,224,71,0.12) 0%, transparent 70%)", pointerEvents: "none" }} />
+        <div style={{ width: "100%", maxWidth: "var(--max-genislik)", padding: "14px 16px" }}>
+          <div className="chip-wrap" style={{ position: "relative", zIndex: 2 }}>
             <button
-              key={k}
-              className={`chip chip-hero ${seciliKategori === k ? "aktif" : ""}`}
-              onClick={() => setSeciliKategori(seciliKategori === k ? null : k)}
+              className={`chip chip-hero ${!seciliKategori ? "aktif" : ""}`}
+              onClick={() => setSeciliKategori(null)}
             >
-              {k}
+              Tümü
             </button>
-          ))}
+            {kategoriler.map((k) => (
+              <button
+                key={k}
+                className={`chip chip-hero ${seciliKategori === k ? "aktif" : ""}`}
+                onClick={() => setSeciliKategori(seciliKategori === k ? null : k)}
+              >
+                {k}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
