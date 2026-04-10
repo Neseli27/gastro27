@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
-import { VARSAYILAN_KATEGORILER, firmaAcikMi } from "../../utils/helpers";
+import { VARSAYILAN_KATEGORILER, firmaAcikMi, formatPara } from "../../utils/helpers";
 import SepetBar from "../../components/SepetBar";
 import BottomNav from "../../components/BottomNav";
 
@@ -18,13 +18,9 @@ export default function AnaSayfa({ sepetAdet, sepetToplam, ...props }) {
 
   const firmalariGetir = async () => {
     try {
-      const q = query(
-        collection(db, "firmalar"),
-        where("durum", "==", "aktif")
-      );
+      const q = query(collection(db, "firmalar"), where("durum", "==", "aktif"));
       const snap = await getDocs(q);
-      const liste = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
-      setFirmalar(liste);
+      setFirmalar(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
     } catch (err) {
       console.error("Firmalar yüklenemedi:", err);
     } finally {
@@ -32,12 +28,10 @@ export default function AnaSayfa({ sepetAdet, sepetToplam, ...props }) {
     }
   };
 
-  // Kategoriye göre filtrele
   const filtreliFirmalar = seciliKategori
     ? firmalar.filter((f) => f.kategoriler?.includes(seciliKategori))
     : firmalar;
 
-  // Açık olanları üste
   const sirali = [...filtreliFirmalar].sort((a, b) => {
     const aAcik = firmaAcikMi(a.calismaSaatleri);
     const bAcik = firmaAcikMi(b.calismaSaatleri);
@@ -51,40 +45,18 @@ export default function AnaSayfa({ sepetAdet, sepetToplam, ...props }) {
       {/* Header */}
       <header className="header">
         <div className="header-logo">
-          GASTRO<span>27</span>
+          <span>G</span>ASTRO27
         </div>
-        <div className="text-xs" style={{ opacity: 0.85 }}>
-          Gaziantep'in Lezzeti Kapında
+        <div style={{ fontSize: "0.625rem", color: "var(--renk-bakir)", fontWeight: 500 }}>
+          Gaziantep'in Lezzeti
         </div>
       </header>
 
-      <div className="sayfa">
-        {/* Arama */}
-        <div
-          onClick={() => navigate("/ara")}
-          style={{
-            background: "var(--renk-beyaz)",
-            borderRadius: "var(--radius-lg)",
-            padding: "14px 16px",
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            boxShadow: "var(--golge-sm)",
-            cursor: "pointer",
-            marginBottom: 16,
-            border: "2px solid var(--renk-gri-100)",
-          }}
-        >
-          <span style={{ fontSize: "1.125rem", color: "var(--renk-gri-400)" }}>
-            🔍
-          </span>
-          <span className="text-muted">Yemek veya restoran ara...</span>
-        </div>
-
-        {/* Kategoriler */}
-        <div className="chip-wrap" style={{ marginBottom: 20 }}>
+      {/* Hero Chip Bar */}
+      <div className="hero-chip-bar">
+        <div className="chip-wrap" style={{ position: "relative", zIndex: 2 }}>
           <button
-            className={`chip ${!seciliKategori ? "aktif" : ""}`}
+            className={`chip chip-hero ${!seciliKategori ? "aktif" : ""}`}
             onClick={() => setSeciliKategori(null)}
           >
             Tümü
@@ -92,28 +64,51 @@ export default function AnaSayfa({ sepetAdet, sepetToplam, ...props }) {
           {VARSAYILAN_KATEGORILER.map((k) => (
             <button
               key={k}
-              className={`chip ${seciliKategori === k ? "aktif" : ""}`}
-              onClick={() =>
-                setSeciliKategori(seciliKategori === k ? null : k)
-              }
+              className={`chip chip-hero ${seciliKategori === k ? "aktif" : ""}`}
+              onClick={() => setSeciliKategori(seciliKategori === k ? null : k)}
             >
               {k}
             </button>
           ))}
         </div>
+      </div>
 
-        {/* Firma Listesi */}
-        <h2
+      <div className="sayfa">
+        {/* Arama */}
+        <div
+          onClick={() => navigate("/ara")}
           style={{
-            fontSize: "1.125rem",
-            fontWeight: 800,
-            marginBottom: 12,
-            color: "var(--renk-gri-800)",
+            background: "var(--renk-beyaz)",
+            borderRadius: "var(--radius-md)",
+            padding: "12px 14px",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            border: "2px solid var(--renk-bal-acik)",
+            cursor: "pointer",
+            marginBottom: 14,
           }}
         >
-          {seciliKategori ? seciliKategori : "Restoranlar"}
-        </h2>
+          <div
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              background: "var(--renk-bal)",
+              flexShrink: 0,
+            }}
+          />
+          <span style={{ color: "var(--renk-gri-400)", fontSize: "0.8125rem" }}>
+            Yemek veya restoran ara...
+          </span>
+        </div>
 
+        {/* Bölüm Başlığı */}
+        <div className="bolum-baslik">
+          {seciliKategori || "Restoranlar"}
+        </div>
+
+        {/* Firma Listesi */}
         {yukleniyor ? (
           <div className="yukleniyor">
             <div className="spinner" />
@@ -133,87 +128,80 @@ export default function AnaSayfa({ sepetAdet, sepetToplam, ...props }) {
             return (
               <div
                 key={firma.id}
-                className="kart"
+                className={`kart ${!acik ? "kart-kapali" : ""}`}
                 onClick={() => navigate(`/firma/${firma.id}`)}
-                style={{
-                  display: "flex",
-                  gap: 12,
-                  cursor: "pointer",
-                  opacity: acik ? 1 : 0.55,
-                }}
+                style={{ display: "flex", gap: 12, cursor: "pointer", position: "relative" }}
               >
                 {/* Logo */}
                 <div
                   style={{
-                    width: 64,
-                    height: 64,
-                    borderRadius: "var(--radius-sm)",
+                    width: 58,
+                    height: 58,
+                    borderRadius: "var(--radius-md)",
                     overflow: "hidden",
                     flexShrink: 0,
-                    background: "var(--renk-gri-100)",
+                    background: "linear-gradient(135deg, #fffbeb, #fef2f2)",
+                    border: "1px solid var(--renk-bakir-acik)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
                   {firma.logo ? (
                     <img
                       src={firma.logo}
                       alt={firma.ad}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                      }}
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
                       loading="lazy"
                     />
                   ) : (
-                    <div
+                    <span
                       style={{
-                        width: "100%",
-                        height: "100%",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
                         fontSize: "1.5rem",
-                        color: "var(--renk-gri-300)",
+                        color: "var(--renk-bakir)",
+                        fontFamily: "var(--font-baslik)",
                         fontWeight: 800,
                       }}
                     >
                       {firma.ad?.[0] || "?"}
-                    </div>
+                    </span>
                   )}
                 </div>
 
                 {/* Bilgi */}
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div className="flex items-center gap-8">
+                  <div className="flex items-center justify-between">
                     <span
                       style={{
                         fontWeight: 700,
-                        fontSize: "1rem",
+                        fontSize: "0.9375rem",
                         color: "var(--renk-gri-900)",
                       }}
                       className="truncate"
                     >
                       {firma.ad}
                     </span>
-                    {!acik && (
-                      <span className="badge badge-tehlike">Kapalı</span>
-                    )}
+                    <span
+                      className="badge"
+                      style={{
+                        background: acik ? "var(--renk-bakir-acik)" : "var(--renk-tehlike-acik)",
+                        color: acik ? "var(--renk-bakir)" : "#991b1b",
+                      }}
+                    >
+                      {acik ? "Açık" : "Kapalı"}
+                    </span>
                   </div>
                   <div
                     className="text-xs text-muted"
-                    style={{ marginTop: 4, display: "flex", gap: 12 }}
+                    style={{ marginTop: 4, display: "flex", gap: 10 }}
                   >
-                    {firma.teslimatSuresi && (
-                      <span>🕐 {firma.teslimatSuresi}</span>
-                    )}
-                    {firma.minSiparis > 0 && (
-                      <span>Min. {firma.minSiparis} ₺</span>
-                    )}
+                    {firma.teslimatSuresi && <span>🕐 {firma.teslimatSuresi}</span>}
+                    {firma.minSiparis > 0 && <span>Min. {formatPara(firma.minSiparis)}</span>}
                   </div>
                   {firma.kategoriler && (
                     <div
-                      className="text-xs text-muted truncate"
-                      style={{ marginTop: 2 }}
+                      className="text-xs truncate"
+                      style={{ marginTop: 3, color: "var(--renk-gri-500)" }}
                     >
                       {firma.kategoriler.slice(0, 3).join(" · ")}
                     </div>
