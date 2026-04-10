@@ -250,20 +250,20 @@ export default function AdminPanel({ toastGoster }) {
 
   return (
     <div>
-      <header className="header" style={{ background: "var(--renk-gri-800)" }}>
-        <div>
+      <div style={{ display: "flex", justifyContent: "center", background: "var(--renk-beyaz)", borderBottom: "1.5px solid var(--renk-bal-acik)", position: "sticky", top: 0, zIndex: 100 }}>
+        <header style={{ width: "100%", maxWidth: "var(--max-genislik)", padding: "0 16px", height: "var(--nav-yukseklik)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div className="header-logo" style={{ fontSize: "1rem" }}>
-            GASTRO<span>27</span> Admin
+            <span>G</span>ASTRO27 Admin
           </div>
-        </div>
-        <button
-          onClick={cikisYap}
-          className="text-xs"
-          style={{ color: "rgba(255,255,255,0.7)" }}
-        >
-          Çıkış
-        </button>
-      </header>
+          <button
+            onClick={cikisYap}
+            className="text-xs"
+            style={{ color: "var(--renk-gri-400)" }}
+          >
+            Çıkış
+          </button>
+        </header>
+      </div>
 
       {/* Tab Bar */}
       <div style={{ padding: "12px 16px 0", maxWidth: "var(--max-genislik)", margin: "0 auto" }}>
@@ -279,7 +279,7 @@ export default function AdminPanel({ toastGoster }) {
               onClick={() => setSekme(s.id)}
               style={
                 sekme === s.id
-                  ? { background: "var(--renk-gri-800)", color: "#fff" }
+                  ? { background: "var(--renk-bakir)", color: "var(--renk-bakir-acik)" }
                   : {}
               }
             >

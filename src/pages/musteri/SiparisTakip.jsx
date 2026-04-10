@@ -108,7 +108,7 @@ export default function SiparisTakip() {
       <header className="header">
         <button
           onClick={() => navigate("/")}
-          style={{ color: "#fff", fontSize: "1.25rem", padding: "4px 8px" }}
+          style={{ color: "var(--renk-bakir)", fontSize: "1.25rem", padding: "4px 8px" }}
         >
           ←
         </button>

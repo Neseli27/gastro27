@@ -104,7 +104,7 @@ export default function Sepet({
         <header className="header">
           <button
             onClick={() => navigate(-1)}
-            style={{ color: "#fff", fontSize: "1.25rem", padding: "4px 8px" }}
+            style={{ color: "var(--renk-bakir)", fontSize: "1.25rem", padding: "4px 8px" }}
           >
             ←
           </button>
@@ -133,7 +133,7 @@ export default function Sepet({
       <header className="header">
         <button
           onClick={() => navigate(-1)}
-          style={{ color: "#fff", fontSize: "1.25rem", padding: "4px 8px" }}
+          style={{ color: "var(--renk-bakir)", fontSize: "1.25rem", padding: "4px 8px" }}
         >
           ←
         </button>
@@ -146,7 +146,7 @@ export default function Sepet({
         <button
           onClick={sepetiTemizle}
           className="text-xs"
-          style={{ color: "rgba(255,255,255,0.7)" }}
+          style={{ color: "var(--renk-gri-400)" }}
         >
           Temizle
         </button>

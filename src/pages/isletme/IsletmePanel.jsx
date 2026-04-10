@@ -114,23 +114,25 @@ export default function IsletmePanel({ toastGoster }) {
       <BildirimModal aktif={bildirim} onKapat={() => setBildirim(false)} />
 
       {/* Header */}
-      <header className="header">
-        <div>
-          <div className="header-logo" style={{ fontSize: "1rem" }}>
-            {oturum.firmaAdi}
+      <div style={{ display: "flex", justifyContent: "center", background: "var(--renk-beyaz)", borderBottom: "1.5px solid var(--renk-bal-acik)", position: "sticky", top: 0, zIndex: 100 }}>
+        <header style={{ width: "100%", maxWidth: "var(--max-genislik)", padding: "0 16px", height: "var(--nav-yukseklik)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <div className="header-logo" style={{ fontSize: "1rem" }}>
+              {oturum.firmaAdi}
+            </div>
+            <div className="text-xs text-muted">
+              İşletme Paneli
+            </div>
           </div>
-          <div className="text-xs" style={{ opacity: 0.7 }}>
-            İşletme Paneli
-          </div>
-        </div>
-        <button
-          onClick={cikisYap}
-          className="text-xs"
-          style={{ color: "rgba(255,255,255,0.7)" }}
-        >
-          Çıkış
-        </button>
-      </header>
+          <button
+            onClick={cikisYap}
+            className="text-xs"
+            style={{ color: "var(--renk-gri-400)" }}
+          >
+            Çıkış
+          </button>
+        </header>
+      </div>
 
       {/* Tab Bar */}
       <div style={{ padding: "12px 16px 0", maxWidth: "var(--max-genislik)", margin: "0 auto" }}>

@@ -121,24 +121,23 @@ export default function KuryePanel({ toastGoster }) {
   return (
     <div>
       {/* Header */}
-      <header
-        className="header"
-        style={{ background: "#06b6d4" }}
-      >
-        <div>
-          <div className="font-bold">{oturum.kuryeAdi}</div>
-          <div className="text-xs" style={{ opacity: 0.7 }}>
-            {oturum.firmaAdi} · Kurye
+      <div style={{ display: "flex", justifyContent: "center", background: "var(--renk-beyaz)", borderBottom: "1.5px solid var(--renk-bal-acik)", position: "sticky", top: 0, zIndex: 100 }}>
+        <header style={{ width: "100%", maxWidth: "var(--max-genislik)", padding: "0 16px", height: "var(--nav-yukseklik)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <div>
+            <div className="font-bold" style={{ color: "var(--renk-bakir)" }}>{oturum.kuryeAdi}</div>
+            <div className="text-xs text-muted">
+              {oturum.firmaAdi} · Kurye
+            </div>
           </div>
-        </div>
-        <button
-          onClick={cikisYap}
-          className="text-xs"
-          style={{ color: "rgba(255,255,255,0.7)" }}
-        >
-          Çıkış
-        </button>
-      </header>
+          <button
+            onClick={cikisYap}
+            className="text-xs"
+            style={{ color: "var(--renk-gri-400)" }}
+          >
+            Çıkış
+          </button>
+        </header>
+      </div>
 
       {/* Tab bar */}
       <div style={{ padding: "12px 16px 0", maxWidth: "var(--max-genislik)", margin: "0 auto" }}>
@@ -148,7 +147,7 @@ export default function KuryePanel({ toastGoster }) {
             onClick={() => setSekme("havuz")}
             style={
               sekme === "havuz"
-                ? { background: "#06b6d4", color: "#fff" }
+                ? { background: "var(--renk-bakir)", color: "#fff" }
                 : {}
             }
           >
@@ -159,7 +158,7 @@ export default function KuryePanel({ toastGoster }) {
             onClick={() => setSekme("teslimatlar")}
             style={
               sekme === "teslimatlar"
-                ? { background: "#06b6d4", color: "#fff" }
+                ? { background: "var(--renk-bakir)", color: "#fff" }
                 : {}
             }
           >
@@ -273,7 +272,7 @@ export default function KuryePanel({ toastGoster }) {
                     disabled={islemdeId === s.id}
                     className="btn btn-tam btn-buyuk"
                     style={{
-                      background: "#06b6d4",
+                      background: "var(--renk-bakir)",
                       color: "#fff",
                     }}
                   >
