@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+<rect width="512" height="512" rx="96" fill="#0a0404"/>
+<rect x="6" y="6" width="500" height="500" rx="90" fill="none" stroke="#d4a017" stroke-width="3"/>
+<circle cx="256" cy="240" r="210" fill="none" stroke="#f59e0b" stroke-width="0.7" opacity="0.1"/>
+<circle cx="256" cy="240" r="190" fill="none" stroke="#f59e0b" stroke-width="0.5" opacity="0.08"/>
+<circle cx="256" cy="240" r="170" fill="none" stroke="#f59e0b" stroke-width="1" opacity="0.06" stroke-dasharray="4,8"/>
+<path d="M256,36 L262,52 L278,52 L265,62 L270,78 L256,68 L242,78 L247,62 L234,52 L250,52Z" fill="#f59e0b" opacity="0.35"/>
+<path d="M256,434 L262,450 L278,450 L265,460 L270,476 L256,466 L242,476 L247,460 L234,450 L250,450Z" fill="#f59e0b" opacity="0.35"/>
+<path d="M36,256 L52,262 L52,278 L62,265 L78,270 L68,256 L78,242 L62,247 L52,234 L52,250Z" fill="#f59e0b" opacity="0.25"/>
+<path d="M476,256 L460,262 L460,278 L450,265 L434,270 L444,256 L434,242 L450,247 L460,234 L460,250Z" fill="#f59e0b" opacity="0.25"/>
+<text x="100" y="315" font-family="Georgia,serif" font-size="310" font-weight="800" fill="#2a0000" transform="translate(10,10)">G</text>
+<text x="100" y="315" font-family="Georgia,serif" font-size="310" font-weight="800" fill="#b91c1c">G</text>
+<text x="100" y="315" font-family="Georgia,serif" font-size="310" font-weight="800" fill="none" stroke="#c8981e" stroke-width="5" opacity="0.4">G</text>
+<text x="100" y="315" font-family="Georgia,serif" font-size="310" font-weight="800" fill="none" stroke="#f59e0b" stroke-width="3" opacity="0.7">G</text>
+<text x="100" y="315" font-family="Georgia,serif" font-size="310" font-weight="800" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.9">G</text>
+<text x="100" y="315" font-family="Georgia,serif" font-size="310" font-weight="800" fill="none" stroke="#fde68a" stroke-width="0.5" opacity="0.6">G</text>
+<text x="270" y="422" font-family="Arial Black,Arial,sans-serif" font-size="155" font-weight="900" fill="#5c3000" transform="translate(6,6)">27</text>
+<text x="270" y="422" font-family="Arial Black,Arial,sans-serif" font-size="155" font-weight="900" fill="#f59e0b">27</text>
+<text x="270" y="422" font-family="Arial Black,Arial,sans-serif" font-size="155" font-weight="900" fill="none" stroke="#fbbf24" stroke-width="0.8" opacity="0.4">27</text>
+<line x1="94" y1="338" x2="230" y2="338" stroke="#d4a017" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+<line x1="290" y1="338" x2="420" y2="338" stroke="#d4a017" stroke-width="2.5" stroke-linecap="round" opacity="0.5"/>
+<circle cx="242" cy="338" r="3.5" fill="#fbbf24" opacity="0.7"/>
+<path d="M252,330 L256,322 L260,330 L268,332 L262,338 L264,346 L256,342 L248,346 L250,338 L244,332Z" fill="#fbbf24" opacity="0.6"/>
+<circle cx="270" cy="338" r="3.5" fill="#fbbf24" opacity="0.7"/>
+</svg>
