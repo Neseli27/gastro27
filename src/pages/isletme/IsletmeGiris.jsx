@@ -21,7 +21,6 @@ export default function IsletmeGiris({ toastGoster }) {
       toastGoster("Firma adı ve şifre girin", "hata");
       return;
     }
-
     setYukleniyor(true);
     try {
       const hash = await hashSifre(sifre);
@@ -31,100 +30,54 @@ export default function IsletmeGiris({ toastGoster }) {
         where("sifreHash", "==", hash)
       );
       const snap = await getDocs(q);
-
       if (snap.empty) {
         toastGoster("Firma adı veya şifre hatalı", "hata");
         setYukleniyor(false);
         return;
       }
-
       const firma = snap.docs[0];
       const firmaData = firma.data();
-
       if (firmaData.durum === "askida") {
-        toastGoster("Hesabınız askıya alınmış. Admin ile iletişime geçin.", "hata");
+        toastGoster("Hesabınız askıya alınmış.", "hata");
         setYukleniyor(false);
         return;
       }
-
       oturumKaydet("isletme", firma.id, { firmaAdi: firmaData.ad });
       toastGoster(`Hoş geldin, ${firmaData.ad}!`, "basari");
       navigate("/isletme/panel", { replace: true });
     } catch (err) {
       console.error("Giriş hatası:", err);
-      toastGoster("Bir hata oluştu, tekrar deneyin", "hata");
+      toastGoster("Bir hata oluştu", "hata");
     } finally {
       setYukleniyor(false);
     }
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100dvh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: 24,
-        background: "linear-gradient(135deg, var(--renk-birincil) 0%, var(--renk-birincil-koyu) 100%)",
-      }}
-    >
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 400,
-          background: "var(--renk-beyaz)",
-          borderRadius: "var(--radius-xl)",
-          padding: 32,
-          boxShadow: "var(--golge-xl)",
-        }}
-      >
+    <div className="giris-sayfa">
+      <div className="giris-kutu">
         <div className="text-center mb-16">
           <div style={{ fontSize: "2.5rem", marginBottom: 8 }}>🏪</div>
-          <h1 style={{ fontSize: "1.5rem", fontWeight: 800 }}>İşletme Girişi</h1>
+          <h1 style={{ fontFamily: "var(--font-baslik)", fontSize: "1.5rem", fontWeight: 800, color: "var(--renk-bakir)" }}>
+            İşletme Girişi
+          </h1>
           <p className="text-sm text-muted">GASTRO27 işletme paneli</p>
         </div>
-
         <form onSubmit={girisYap}>
           <div className="form-grup">
             <label className="form-etiket">Firma Adı</label>
-            <input
-              className="form-input"
-              placeholder="Firma adınızı girin"
-              value={firmaAd}
-              onChange={(e) => setFirmaAd(e.target.value)}
-              autoFocus
-            />
+            <input className="form-input" placeholder="Firma adınızı girin" value={firmaAd} onChange={(e) => setFirmaAd(e.target.value)} autoFocus />
           </div>
-
           <div className="form-grup">
             <label className="form-etiket">Şifre</label>
-            <input
-              className="form-input"
-              type="password"
-              placeholder="Şifrenizi girin"
-              value={sifre}
-              onChange={(e) => setSifre(e.target.value)}
-            />
+            <input className="form-input" type="password" placeholder="Şifrenizi girin" value={sifre} onChange={(e) => setSifre(e.target.value)} />
           </div>
-
-          <button
-            type="submit"
-            disabled={yukleniyor}
-            className="btn btn-birincil btn-tam btn-buyuk"
-            style={{ marginTop: 8 }}
-          >
+          <button type="submit" disabled={yukleniyor} className="btn btn-birincil btn-tam btn-buyuk" style={{ marginTop: 8 }}>
             {yukleniyor ? "Giriş yapılıyor..." : "Giriş Yap"}
           </button>
         </form>
-
         <div className="text-center mt-16">
-          <button
-            className="text-sm"
-            style={{ color: "var(--renk-gri-400)" }}
-            onClick={() => navigate("/")}
-          >
+          <button className="text-sm" style={{ color: "var(--renk-gri-400)" }} onClick={() => navigate("/")}>
             ← Ana sayfaya dön
           </button>
         </div>
