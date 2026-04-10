@@ -78,6 +78,24 @@ export default function FirmaDetay({ sepetAdet, sepetToplam, sepeteEkle }) {
           </div>
         )}
 
+        {/* Kapalı uyarısı */}
+        {!acik && (
+          <div
+            style={{
+              padding: "12px 14px",
+              background: "var(--renk-tehlike-acik)",
+              borderRadius: "var(--radius-md)",
+              marginBottom: 14,
+              fontSize: "0.8125rem",
+              fontWeight: 600,
+              color: "#991b1b",
+              textAlign: "center",
+            }}
+          >
+            Bu işletme şu an kapalı — sipariş verilemez
+          </div>
+        )}
+
         {/* Ürün listesi */}
         {urunler.length === 0 ? (
           <div className="bos-durum">
@@ -85,14 +103,16 @@ export default function FirmaDetay({ sepetAdet, sepetToplam, sepeteEkle }) {
             <div className="bos-durum-mesaj">Henüz menüye ürün eklenmemiş</div>
           </div>
         ) : (
-          Object.entries(gruplu).map(([kat, katUrunler]) => (
+          <div style={{ opacity: acik ? 1 : 0.5, pointerEvents: acik ? "auto" : "none" }}>
+          {Object.entries(gruplu).map(([kat, katUrunler]) => (
             <div key={kat} style={{ marginBottom: 18 }}>
               <div className="bolum-baslik">{kat}</div>
               {katUrunler.map((urun) => (
                 <UrunKart key={urun.id} urun={urun} onEkle={(u) => sepeteEkle(u, firmaId, firma.ad)} />
               ))}
             </div>
-          ))
+          ))}
+          </div>
         )}
       </div>
       <SepetBar sepetAdet={sepetAdet} sepetToplam={sepetToplam} />

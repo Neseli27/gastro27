@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import { formatPara, siparisNoUret } from "../../utils/helpers";
+import { formatPara, siparisNoUret, firmaAcikMi } from "../../utils/helpers";
 import KonumButon from "../../components/KonumButon";
 
 export default function Sepet({
@@ -27,12 +27,17 @@ export default function Sepet({
   const [siparisNot, setSiparisNot] = useState("");
   const [gonderiliyor, setGonderiliyor] = useState(false);
   const [minSiparis, setMinSiparis] = useState(0);
+  const [firmaKapali, setFirmaKapali] = useState(false);
 
-  // Firma min sipariş tutarını çek
+  // Firma bilgilerini çek
   useEffect(() => {
     if (!sepetFirmaId) return;
     getDoc(doc(db, "firmalar", sepetFirmaId)).then((snap) => {
-      if (snap.exists()) setMinSiparis(snap.data().minSiparis || 0);
+      if (snap.exists()) {
+        const data = snap.data();
+        setMinSiparis(data.minSiparis || 0);
+        setFirmaKapali(!firmaAcikMi(data.calismaSaatleri));
+      }
     }).catch(() => {});
   }, [sepetFirmaId]);
 
@@ -40,6 +45,10 @@ export default function Sepet({
 
   const siparisVer = async () => {
     // Validasyonlar
+    if (firmaKapali) {
+      toastGoster("İşletme şu an kapalı, sipariş verilemez", "hata");
+      return;
+    }
     if (!musteriAd.trim()) {
       toastGoster("Lütfen adınızı girin", "hata");
       return;
@@ -283,6 +292,26 @@ export default function Sepet({
               ⚠️ Minimum sipariş tutarı {formatPara(minSiparis)} — {formatPara(minSiparis - sepetToplam)} daha eklemelisiniz
             </div>
           )}
+
+          {/* Firma kapalı uyarısı */}
+          {firmaKapali && (
+            <div
+              style={{
+                marginTop: 10,
+                padding: "8px 12px",
+                background: "var(--renk-tehlike-acik)",
+                borderRadius: "var(--radius-sm)",
+                fontSize: "0.8125rem",
+                fontWeight: 600,
+                color: "#991b1b",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              🔒 İşletme şu an kapalı — sipariş verilemez
+            </div>
+          )}
         </div>
 
         {/* Sipariş notu */}
@@ -415,7 +444,7 @@ export default function Sepet({
         {/* Sipariş ver butonu */}
         <button
           onClick={siparisVer}
-          disabled={gonderiliyor || minSiparisAlti}
+          disabled={gonderiliyor || minSiparisAlti || firmaKapali}
           className="btn btn-birincil btn-tam btn-buyuk"
         >
           {gonderiliyor ? (
