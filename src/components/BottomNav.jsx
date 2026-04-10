@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 const menuler = [
   { yol: "/", ikon: "🏠", etiket: "Ana Sayfa" },
   { yol: "/ara", ikon: "🔍", etiket: "Ara" },
+  { yol: "/siparislerim", ikon: "📋", etiket: "Siparişlerim" },
   { yol: "/sepet", ikon: "🛒", etiket: "Sepet" },
 ];
 

@@ -7,6 +7,7 @@ import Arama from "./pages/musteri/Arama";
 import FirmaDetay from "./pages/musteri/FirmaDetay";
 import Sepet from "./pages/musteri/Sepet";
 import SiparisTakip from "./pages/musteri/SiparisTakip";
+import GecmisSiparisler from "./pages/musteri/GecmisSiparisler";
 
 // İşletme
 import IsletmeGiris from "./pages/isletme/IsletmeGiris";
@@ -194,6 +195,7 @@ export default function App() {
         <Route path="/firma/:firmaId" element={<FirmaDetay {...sepetProps} />} />
         <Route path="/sepet" element={<Sepet {...sepetProps} />} />
         <Route path="/takip/:siparisId" element={<SiparisTakip />} />
+        <Route path="/siparislerim" element={<GecmisSiparisler />} />
 
         {/* İşletme */}
         <Route path="/isletme" element={<IsletmeGiris toastGoster={toastGoster} />} />

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 import { formatPara, siparisNoUret } from "../../utils/helpers";
 import KonumButon from "../../components/KonumButon";
@@ -26,6 +26,17 @@ export default function Sepet({
   const [adresNot, setAdresNot] = useState("");
   const [siparisNot, setSiparisNot] = useState("");
   const [gonderiliyor, setGonderiliyor] = useState(false);
+  const [minSiparis, setMinSiparis] = useState(0);
+
+  // Firma min sipariş tutarını çek
+  useEffect(() => {
+    if (!sepetFirmaId) return;
+    getDoc(doc(db, "firmalar", sepetFirmaId)).then((snap) => {
+      if (snap.exists()) setMinSiparis(snap.data().minSiparis || 0);
+    }).catch(() => {});
+  }, [sepetFirmaId]);
+
+  const minSiparisAlti = minSiparis > 0 && sepetToplam < minSiparis;
 
   const siparisVer = async () => {
     // Validasyonlar
@@ -47,6 +58,10 @@ export default function Sepet({
     }
     if (sepet.length === 0) {
       toastGoster("Sepetiniz boş", "hata");
+      return;
+    }
+    if (minSiparisAlti) {
+      toastGoster(`Minimum sipariş tutarı ${formatPara(minSiparis)}`, "hata");
       return;
     }
 
@@ -248,6 +263,26 @@ export default function Sepet({
               {formatPara(sepetToplam)}
             </span>
           </div>
+
+          {/* Min sipariş uyarısı */}
+          {minSiparisAlti && (
+            <div
+              style={{
+                marginTop: 10,
+                padding: "8px 12px",
+                background: "var(--renk-uyari-acik)",
+                borderRadius: "var(--radius-sm)",
+                fontSize: "0.8125rem",
+                fontWeight: 600,
+                color: "var(--renk-bakir)",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+              }}
+            >
+              ⚠️ Minimum sipariş tutarı {formatPara(minSiparis)} — {formatPara(minSiparis - sepetToplam)} daha eklemelisiniz
+            </div>
+          )}
         </div>
 
         {/* Sipariş notu */}
@@ -361,7 +396,7 @@ export default function Sepet({
         <div
           className="kart"
           style={{
-            background: "var(--renk-ikincil-acik)",
+            background: "var(--renk-bakir-acik)",
             display: "flex",
             alignItems: "center",
             gap: 10,
@@ -380,7 +415,7 @@ export default function Sepet({
         {/* Sipariş ver butonu */}
         <button
           onClick={siparisVer}
-          disabled={gonderiliyor}
+          disabled={gonderiliyor || minSiparisAlti}
           className="btn btn-birincil btn-tam btn-buyuk"
         >
           {gonderiliyor ? (
